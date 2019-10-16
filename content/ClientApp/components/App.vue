@@ -3,7 +3,7 @@
 		el-container
 
 			el-header
-				header-layout(title="ASP.NET & Vue Template")
+				header-layout(title="ASP.NET & Vue Template!")
 
 			el-main
 				view-layout

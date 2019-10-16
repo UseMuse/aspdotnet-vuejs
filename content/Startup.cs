@@ -33,9 +33,13 @@ namespace AspDotnetVueJs
             {
             });
 
-            services
-                .AddMvc().AddNewtonsoftJson()
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+          
+            services.AddControllersWithViews()
+               //.AddMvcOptions(opt => { opt.SerializerOptions.PropertyNameCaseInsensitive = true; });
+               .AddNewtonsoftJson();
+
+            services.AddRazorPages().AddRazorRuntimeCompilation();
+            services.AddMvc(opt => opt.EnableEndpointRouting = false).AddRazorRuntimeCompilation();
 
             services.AddSwaggerGen(c =>
             {
@@ -89,6 +93,13 @@ namespace AspDotnetVueJs
             {
                 app.UseLiveReload();
                 app.UseDeveloperExceptionPage();
+
+                app.UseWebpackDevMiddleware(
+                    new WebpackDevMiddlewareOptions
+                    {
+                        HotModuleReplacement = true,
+                        ConfigFile = "./ClientApp/build/webpack.config.js"
+                    });
             }
             else
             {
@@ -118,24 +129,28 @@ namespace AspDotnetVueJs
             app.UseSpaStaticFiles();
             app.UseRouting();
             app.UseCors("CorsPolicy");
-            app.UseEndpoints(endpoints =>
+
+
+            app.UseMvc(routes =>
             {
-                endpoints.MapControllerRoute(
-                  name: "default",
-                  pattern: "{controller}/{action=Index}/{id?}");
+                routes.MapRoute(
+                    name: "default",
+                    template: "{controller=Home}/{action=Index}/{id?}");
+
             });
-
-            app.UseSpa(spa =>
+            // если запрос не к api то использовать spa маршрутизацию
+            app.MapWhen(x =>
             {
-                spa.Options.SourcePath = "ClientApp";
+                return !x.Request.Path.Value.ToLower().Contains("api");
+            }, builder =>
+            {
 
-                if (env.IsDevelopment())
-                    spa.ApplicationBuilder.UseWebpackDevMiddleware(
-                        new WebpackDevMiddlewareOptions
-                        {
-                            HotModuleReplacement = true,
-                            ConfigFile = "./ClientApp/build/webpack.config.js"
-                        });
+                builder.UseMvc(routes =>
+                {
+                    routes.MapSpaFallbackRoute(
+                    name: "spa-fallback",
+                    defaults: new { controller = "Home", action = "Index" });
+                });
             });
         }
     }

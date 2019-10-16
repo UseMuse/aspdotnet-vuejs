@@ -19,10 +19,10 @@ const bundleOutputDir = path.resolve(rootDir, './wwwroot/dist');
 console.info(`Building for production: ${BaseConfig.isProduction}`);
 rimraf.sync(path.resolve(rootDir, 'wwwroot/**/*'), { silent: true });
 
-if (!BaseConfig.isProduction) {
-	fs.createReadStream(path.resolve(rootDir, 'ClientApp/build/publishingLoader.html'))
-		.pipe(fs.createWriteStream(path.resolve(rootDir, 'wwwroot/index.html')));
-}
+//if (!BaseConfig.isProduction) {
+//	fs.createReadStream(path.resolve(rootDir, 'ClientApp/build/publishingLoader.html'))
+//		.pipe(fs.createWriteStream(path.resolve(rootDir, 'wwwroot/index.html')));
+//}
 
 console.info(BaseConfig);
 
@@ -201,13 +201,13 @@ module.exports = {
 		),
 		new HtmlWebpackPlugin(
 			{
-				filename: path.resolve(rootDir, 'wwwroot/index.html'),
-				template: path.resolve(rootDir, 'ClientApp/index.html'),
+                filename: path.resolve(rootDir, 'Views/Shared/_Layout.cshtml'),
+                template: path.resolve(rootDir, 'Views/Shared/_LayoutTemplate.cshtml'),
 				inject: true,
-				templateParameters: {
-					baseHref: BaseConfig.baseUriPath,
-					appName: AppConfig.App.Title
-				}
+				//templateParameters: {
+				//	baseHref: BaseConfig.baseUriPath,
+				//	appName: AppConfig.App.Title
+				//}
 			}
 		)
 	].concat(BaseConfig.isProduction ? [
